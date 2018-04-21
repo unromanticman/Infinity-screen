@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <link rel="stylesheet" href="./bootstrap.min.css">
+  <script src="./jquery-3.3.1.slim.min.js"></script>
+  <script src="./bootstrap.min.js"></script>
+</head>
+<body>
+<style type="text/css">
+ body{background: black;}
+</style>
+<div>
+<p style="color:white">Please click screen.</p>
+<div class="drag-zone" style="text-align: center;margin: 0 auto;">
+</div>
+</div>
+<script type="text/javascript">
+  
+  let items = [
+    {
+      img:'./image.png'
+    }
+  ];
+
+  $('body').mouseup(function(e){ //点击鼠标就算不松开也会触发事件
+      $('.drag-zone').empty();
+      items.push({
+        img:'./image.png'
+      });
+      refresh();
+  });
+  
+  function getSquare(num){
+    for(var i=0;i<1e9;i++){
+        console.log(i);
+        if(i*i >= num){
+          return i;
+        }
+    }
+  }
+  
+  function create(items){
+    //取得items開根號後最接近的平方數，並且大於items長度平方
+    var num = getSquare(items.length);
+    result = '';
+    for(var i=0,count = 0;i<num;i++){
+      result+=`<div class="drag-panel row" style="text-align: center;margin:0 auto;">`
+      for(var j=0;j<num;j++){
+        result += `<div class="drag-item">`;
+        if(items.length > count){
+          result += `<img src="`+items[count++].img+`" style="padding:10px;max-height:`+(($( window ).height()-30)/num)+`px;max-width:`+($( window ).width())+`px;"/>`
+        }
+        result += `</div>`
+      }
+      result+='</div>';
+    }
+    return result;
+  }
+  
+  function refresh(){
+    $(".drag-zone").append(create(items));
+    $( ".drag-item" ).each(function( index ) {
+      if(items.length == 1){
+        $(this).addClass("col-md-12");
+      }else if(items.length == 2){
+        $(this).addClass("col-md-6");
+      }else if(items.length == 3){
+        $(this).addClass("col-md-6");
+      }else if(items.length == 4){
+        $(this).addClass("col-md-6");
+      }else if(items.length <= 9 ){
+        $(this).addClass("col-md-4");
+      }else if(items.length <= 16){
+        $(this).addClass("col-md-3");
+      }else if(items.length >16){
+        $(this).addClass("col");
+      }
+    });
+  }
+  refresh();
+</script>
+</body>
+</html>
