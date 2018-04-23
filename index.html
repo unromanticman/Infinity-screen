@@ -1,98 +1,112 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>Infinity-screen</title>
   <link rel="stylesheet" href="./bootstrap.min.css">
   <script src="./jquery-3.3.1.slim.min.js"></script>
   <script src="./bootstrap.min.js"></script>
 </head>
-<body>
-<style type="text/css">
- body{background: black;}
-</style>
-<div>
-<p style="color:white">Please click on screen.</p>
-<div class="drag-zone" style="text-align: center;margin: 0 auto;">
-</div>
-</div>
-<script type="text/javascript">
-  
-  let items = [
-    {
-      img:'http://140.137.99.91:8008'
-    },
-    {
-      img:'http://140.137.99.93:8008/'
-    },
-    {
-      img:'http://140.137.99.94:8008/'
-    }
-    ,{
-      img:'http://140.137.99.123:8008/'
-    },
-    {
-      img:'http://140.137.99.97:8008/'
-    },{
-      img:'http://140.137.99.124:8008'
-    },
-  ];
 
-  $('body').mouseup(function(e){
-      $('.drag-zone').empty();
-      items.push({
-        img:'./image.png'
-      });
-      refresh();
+<body>
+  <style type="text/css">
+  body {
+    background: black;
+  }
+  </style>
+  <div>
+    <p style="color:white">Please click on screen.</p>
+    <div class="drag-zone" style="text-align: center;margin: 0 auto;">
+    </div>
+  </div>
+  <script>
+  function allowDrop(ev) {
+    ev.preventDefault();
+  }
+
+  function drag(ev) {
+    ev.dataTransfer.setData("image", ev.target.id);
+    console.log("被抓取的id" + ev.target.id);
+
+  }
+
+  function drop(ev) {
+
+    console.log("要交換的id" + ev.target.id);
+
+    //交換
+
+    var image1 = document.getElementById(ev.target.id).src;
+
+    var image2 = document.getElementById(ev.dataTransfer.getData("image")).src;
+
+    document.getElementById(ev.target.id).src = image2;
+    document.getElementById(ev.dataTransfer.getData("image")).src = image1;
+
+  }
+  </script>
+  <script type="text/javascript">
+  let items = [{
+    img: 'http://140.137.99.91:8008'
+  }];
+
+  $('body').mouseup(function(e) {
+    $('.drag-zone').empty();
+    items.push({
+      img: './image.png'
+    });
+    refresh();
   });
-  
-  function getSquare(num){
-    for(var i=0;i<1e9;i++){
-        console.log(i);
-        if(i*i >= num){
-          return i;
-        }
+
+  function getSquare(num) {
+    for (var i = 0; i < 1e9; i++) {
+      console.log(i);
+      if (i * i >= num) {
+        return i;
+      }
     }
   }
-  
-  function create(items){
+
+  function create(items) {
     //取得items開根號後最接近的平方數，並且大於items長度平方
     var num = getSquare(items.length);
     result = '';
-    for(var i=0,count = 0;i<num;i++){
-      result+=`<div class="drag-panel row" style="text-align: center;margin:0 auto;">`
-      for(var j=0;j<num;j++){
-        result += `<div class="drag-item">`;
-        if(items.length > count){
-          result += `<img src="`+items[count++].img+`" style="padding:10px;max-height:`+(($( window ).height()-30)/num)+`px;max-width:`+($( window ).width())+`px;"/>`
+    for (var i = 0, count = 0; i < num; i++) {
+      result += `<div class="drag-panel row" style="text-align: center;margin:0 auto;">`
+      for (var j = 0; j < num; j++) {
+        result += `<div ondragover="allowDrop(event)" style="border: 1px solid #fff;" id="dragitem` + count + `" ondrop="drop(event)" class="drag-item">`;
+        if (items.length > count) {
+          result += `<img id="drag` + count + `" draggable="true" ondragstart="drag(event)" src="` + items[count++].img + `" style="padding:10px;max-height:` + (($(window).height() - 30) / num) + `px;max-width:` + ($(window).width()) + `px;"/>`
         }
         result += `</div>`
       }
-      result+='</div>';
+      result += '</div>';
     }
     return result;
   }
-  
-  function refresh(){
+
+  function refresh() {
     $(".drag-zone").append(create(items));
-    $( ".drag-item" ).each(function( index ) {
-      if(items.length == 1){
+    $(".drag-item").each(function(index) {
+      if (items.length == 1) {
         $(this).addClass("col-md-12");
-      }else if(items.length == 2){
+      } else if (items.length == 2) {
         $(this).addClass("col-md-6");
-      }else if(items.length == 3){
+      } else if (items.length == 3) {
         $(this).addClass("col-md-6");
-      }else if(items.length == 4){
+      } else if (items.length == 4) {
         $(this).addClass("col-md-6");
-      }else if(items.length <= 9 ){
+      } else if (items.length <= 9) {
         $(this).addClass("col-md-4");
-      }else if(items.length <= 16){
+      } else if (items.length <= 16) {
         $(this).addClass("col-md-3");
-      }else if(items.length >16){
+      } else if (items.length > 16) {
         $(this).addClass("col");
       }
     });
   }
   refresh();
-</script>
+  </script>
 </body>
+
 </html>
